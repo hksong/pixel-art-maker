@@ -1,3 +1,5 @@
+![alt text](http://fc01.deviantart.net/fs71/f/2011/279/b/2/pixel_art_creator_by_kaikidan-d4c1amh.png)
+
 Create your own Pixel Art Maker, which lets you click on a grid to "paint" pixel art. The interface is completely up to you, but it could look something like this:
 
 It boils down to this: A user selects a color and clicks on pixels to paint them with the selected color.
