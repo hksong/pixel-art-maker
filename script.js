@@ -11,6 +11,7 @@ var paletteRows = 2;
 var contrastRows = 1;
 var w = (100/cols) + "%";
 var h = (95/(rows+paletteRows)) + "vh";
+var dragging = false;
 // scales the pixel art maker
 
 function start() {
@@ -22,7 +23,7 @@ function start() {
 	fillPalette();
 	listenForPixels();
 	listenForPalettes();
-
+	listenForWheel();
 	addClass(palette[0][0],"color");
 }
 
@@ -135,10 +136,11 @@ function fillPalette() {
 }
 
 function listenForPixels() {
-	for (var i = 0; i < rows; i++) {
-		for (var j = 0; j < cols; j++) {
-			pixels[i][j].addEventListener("click", colorPixel);
-		}
+	var pix = queryAll(".pixel");
+	for (var i = 0; i < pix.length; i++) {
+			pix[i].addEventListener("click", colorPixel);
+			pix[i].addEventListener("mousedown", dragPixel);
+			pix[i].addEventListener("mouseup", stopDrag);
 	}
 }
 
@@ -148,6 +150,13 @@ function listenForPalettes() {
 	for (var i = 0; i < len; i++) {
 			pals[i].addEventListener("click", setColor);
 	}
+}
+
+function listenForWheel() {
+	var wheel = query("#wheel");
+	wheel.addEventListener("click", function() {
+		getColor().classList.remove("color");
+	});
 }
 
 function resetPixels() {
@@ -163,23 +172,37 @@ function resetPixels() {
 function colorPixel() {
 	addClass(this, "colored");
 	if (getColor()) {
-		this.style.backgroundColor = getColor();
+		this.style.backgroundColor = getColor().value;
 	}
 	else {
-
+		this.style.backgroundColor = query("#wheel").value;
 	}
 	this.style.border = "";
 	this.style.borderRadius = "";
 }
 
+function dragPixel(event) {
+	event.preventDefault();
+	var pix = queryAll(".pixel");
+	for (var i = 0; i < pix.length; i++) {
+		pix[i].addEventListener("mouseenter", colorPixel);
+	}}
+
+function stopDrag() {
+	var pix = queryAll(".pixel");
+	for (var i = 0; i < pix.length; i++) {
+		pix[i].removeEventListener("mouseenter", colorPixel);
+	}
+}
+
 function setColor() {
-	query(".color").classList.remove("color");
+	if (getColor()) getColor().classList.remove("color");
 	addClass(this,"color");
 	console.log(this);
 }
 
 function getColor() {
-	return query(".color").value;
+	return query(".color");
 }
 
 function createEle(tag) {
@@ -229,4 +252,5 @@ function initialize() {
 	append(document.body,reset);
 	styleLabelInput(resetLabel, reset, "reset", "button");
 	reset.value = "Reset Pixels";
+	reset.addEventListener("click", resetPixels);
 }
